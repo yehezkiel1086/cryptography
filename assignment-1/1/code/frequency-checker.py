@@ -1,0 +1,116 @@
+from tabulate import tabulate
+
+THIS_NUMBER_ENCRYPTED_MESSAGE = """
+LAHYCXPAJYQHRBJWRWMRBYNWBJKUNCXXUOXAYAXCNLCRWPRWOXAVJCRXWRWLXV
+YDCRWPBHBCNVBRCRBDBNMNENAHFQNANKHKRUURXWBXOYNXYUNFXAUMFRMNXWJM
+JRUHKJBRBBNLDARWPKXCQMJCJJCANBCJWMMJCJRWVXCRXWLAHYCXPAJYQRLBHB
+CNVBJANODWMJVNWCJUCXBCJWMJAMYAXCXLXUBVXBCWXCJKUHCQNCAJWBYXACUJ
+HNABNLDARCHCUBYAXCXLXUFQRLQNWJKUNBBCAXWPNWLAHYCRXWJLAXBBJFRMNA
+JWPNXOJYYURLJCRXWBMNBYRCNRCBRVYXACJWLNLAHYCXPAJYQHRBRWQNANWCUH
+OAJPRUNNENWCQNVXBCBNLDANLAHYCXPAJYQRLBHBCNVLJWKNANWMNANMLXVYUN
+CNUHRWBNLDANKHJBRWPUNBYNLRORLJCRXWOUJFXAYAXPAJVVRWPNAAXACAJMRC
+RXWJUBXOCFJANCNBCRWPVNCQXMBBDLQJBDWRCCNBCRWPJANRWBDOORLRNWCCXD
+WLXENABNLDARCHEDUWNAJKRURCRNBRWLAHYCXBHBCNVBRWBCNJMLAHYCXPAJYQ
+RLBNLDARCHRBNBCJKURBQNMCQAXDPQVJCQNVJCRLJUVXMNURWPJWMARPXAXDBY
+AXXOBMNVXWBCAJCRWPCQJCJBHBCNVVNNCBCQNWNLNBBJAHBNLDARCHYAXYNACR
+NBCQNBNJAPDVNWCBXOCNWANUHXWYUJDBRKUNJBBDVYCRXWBCXEJURMJCNCQNRA
+LUJRVBXWNXOCQNNJAURNBCJWMBRVYUNBCLAHYCXPAJYQRLCNLQWRZDNBRBCQNL
+JNBJALRYQNAFQRLQMJCNBKJLTCXJAXDWMKLCQRBVNCQXMNWLXMNBYUJRWCNGCK
+HBQROCRWPNJLQUNCCNAXOCQNJUYQJKNCKHJORGNMWDVKNAXOYXBRCRXWBFQRUN
+CQRBJYYAXJLQFJBNOONLCRENJCCQNCRVNMDNCXCQNXKBLDARCHXOCQNVNCQXMR
+CYAXERMNBWXANJUBNLDARCHCXMJHBRWLNCQNANJANXWUHYXBBRKUNBQROCBCQN
+LRYQNALJWKNNJBRUHKAXTNWCQAXDPQKADCNOXALNMNBYRCNRCBBRVYURLRCHCQ
+NLJNBJALRYQNAANVJRWBXWNXOCQNVXBCFRMNUHANLXPWRINMNWLAHYCRXWCNLQ
+WRZDNBQXFNENARCXOONABWXANJUYAXCNLCRXWJBRCLJWKNZDRLTUHMNLRYQNAN
+MKHQJWMJMMRCRXWJUUHRCBLRYQNACNGCRBNJBRUHRMNWCRORJKUNKNLJDBNCQN
+OANZDNWLHMRBCARKDCRXWXOUNCCNABVRAAXABCQJCXOCQNNWPURBQUJWPDJPNC
+QRBQRPQURPQCBJTNHYARWLRYUNRWVXMNAWLAHYCXPAJYQHCADNBNLDARCHANUR
+NBWXCXWUHXWBNLANLHKDCJUBXXWBCAXWPVJCQNVJCRLJUOXDWMJCRXWBJWMLXV
+YDCJCRXWJURWONJBRKRURCH"""
+
+
+def main():
+    freq_table: dict[str, int] = {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0,
+        "E": 0,
+        "F": 0,
+        "G": 0,
+        "H": 0,
+        "I": 0,
+        "J": 0,
+        "K": 0,
+        "L": 0,
+        "M": 0,
+        "N": 0,
+        "O": 0,
+        "P": 0,
+        "Q": 0,
+        "R": 0,
+        "S": 0,
+        "T": 0,
+        "U": 0,
+        "V": 0,
+        "W": 0,
+        "X": 0,
+        "Y": 0,
+        "Z": 0,
+    }
+
+    for char in THIS_NUMBER_ENCRYPTED_MESSAGE:
+        # skip newline char
+        if char == "\n":
+            continue
+
+        insert_into_dict(this_dict=freq_table, current_char=char)
+
+    sanitize_dict(this_dict=freq_table)
+
+    print_table(this_dict=freq_table)
+
+    return
+
+
+def insert_into_dict(this_dict: dict[str, int], current_char: str) -> None:
+    if current_char in this_dict:
+        this_dict[current_char] = this_dict[current_char] + 1
+    else:
+        this_dict[current_char] = 1
+
+    return
+
+
+def sanitize_dict(this_dict: dict[str, int]) -> None:
+    for char in list(this_dict.keys()):
+        if this_dict[char] == 0:
+            del this_dict[char]
+
+
+def print_table(this_dict: dict[str, int]) -> None:
+    result_list: list = []
+
+    for char in this_dict:
+        this_list: list = []
+
+        this_list.append(char)
+        this_list.append(this_dict[char])
+
+        result_list.append(this_list)
+
+    print(
+        tabulate(
+            result_list,
+            headers=["Character", "Frequency"],
+            stralign="center",
+            numalign="center",
+            tablefmt="github"
+        )
+    )
+
+    return
+
+
+if __name__ == "__main__":
+    main()
