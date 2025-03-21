@@ -13,5 +13,9 @@ Sehingga nilai m yang memungkinkan adalah semua angka ganjil antara 1 dan 256.
 
   Menghasilkan m = 115, sehingga nilai b = 42 (didapat menggunakan kode)
 
+## Kode yang digunakan
+- [Kode](./code/m_and_b_searcher.py) yang digunakan untuk mencari nilai x (invers dari m), m, dan b
+- [Kode](./code/image_restore.py) yang digunakan untuk mendapatkan hasil gambar yang dienkrip
+
 ## Hasil Dekripsi
 ![Decrypted Image](./code/decrypted.jpeg)
