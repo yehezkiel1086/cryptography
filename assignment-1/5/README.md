@@ -19,3 +19,15 @@ Sehingga nilai m yang memungkinkan adalah semua angka ganjil antara 1 dan 256.
 
 ## Hasil Dekripsi
 ![Decrypted Image](./code/decrypted.jpeg)
+
+## Pendekatan dengan metode lain
+
+### Brute Force dan Exhaustive Key Attack
+- Nilai n (ukuran alfabet) yang digunakan adalah 256, sehingga nilai yang b yang memungkinkan adalah 0-255 (di luar hal tersebut),
+hasil modulo akan terulang
+- Karena nilai m merupakan bilangan yang koprima dengan nilai n, maka nilai m pasti di antara 1 dan 256
+- Dari kedua poin di atas, dapat digunakan kode *looping* untuk mengetahui nilai m dan b berdasarkan *known plain text* yang diketahui
+di awal
+
+### Kode yang digunakan
+- [Kode](./code/brute_force.py) yang digunakan untuk *brute force key* yang digunakan
