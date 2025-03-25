@@ -25,13 +25,13 @@ terulang.
 
 ## Waktu yang digunakan untuk kriptanalisis
 Waktu yang digunakan untuk mencari nilai m dan b melalui *looping* yaitu 128 + 256 (128 merupakan jumlah kunci m yang mungkin
-dan 256 adalah jumla h nilai b yang mungkin), sehingga waktu yang dibutuhkan adalah konstan.
+dan 256 adalah jumlah nilai b yang mungkin), sehingga waktu yang dibutuhkan adalah konstan.
 
 ## Pendekatan dengan metode lain
 
 ### Brute Force dan Exhaustive Key Attack
-- Nilai n (ukuran alfabet) yang digunakan adalah 256, sehingga nilai yang b yang memungkinkan adalah 0-255 (di luar hal tersebut),
-hasil modulo akan terulang
+- Nilai n (ukuran alfabet) yang digunakan adalah 256, sehingga nilai yang b yang memungkinkan adalah 0-255 (di luar hal tersebut,
+hasil modulo akan terulang)
 - Karena nilai m merupakan bilangan yang koprima dengan nilai n, maka nilai m pasti di antara 1 dan 256
 - Dari kedua poin di atas, dapat digunakan kode *looping* untuk mengetahui nilai m dan b berdasarkan *known plain text* yang diketahui
 di awal
