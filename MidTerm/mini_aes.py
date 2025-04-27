@@ -42,6 +42,14 @@ class MiniAes:
         self.__plaintext = plaintext
         self.__keys = keys
         self.__round_keys: list[list[int]] = []
+        self.__ciphertext = ""
+
+    # Getter and Setter for __ciphertext
+    def set_ciphertext(self, ciphertext: str) -> None:
+        self.__ciphertext = ciphertext
+
+    def get_ciphertext(self) -> str:
+        return self.__ciphertext
 
     # Getter and Setter for __plaintext
     def set_plaintext(self, plaintext: str) -> None:
@@ -115,7 +123,7 @@ class MiniAes:
 
         # round = 3
         # but needed more for round 0 (plus 1) and the last one (plus 1)
-        for i in range(self.__ROUND__ + 2):
+        for i in range(self.__ROUND__):
             this_round_keys: list[int] = []
 
             this_round_keys.append(round_keys[i][0] ^ self.__SBOX__[round_keys[i][3]] ^ i)
@@ -147,7 +155,7 @@ class MiniAes:
 
     def mix_columns(self, state: list[list[int]]) -> list[list[int]]:
         __CONSTANT_MATRIX = [
-            0x3, 0x4, 0x4, 0x3,
+            0x1, 0x4, 0x4, 0x1,
         ]
 
         result_list: list[list[int]] = []
@@ -220,7 +228,7 @@ class MiniAes:
         state = self.convert_to_nibble(self.get_plaintext())
         state = self.add_round_keys(state, 0)
 
-        for current_round in range(1, self.__ROUND__ + 1):
+        for current_round in range(1, self.__ROUND__):
             print(f"ROUND {current_round}")
 
             state = self.sub_nibbles(state)
@@ -242,7 +250,7 @@ class MiniAes:
         state = self.shift_rows(state)
         print(f"After ShiftRows : {self.state_to_hex(state)}")
 
-        state = self.add_round_keys(state, 4)
+        state = self.add_round_keys(state, 3)
         print(f"After AddRoundKey: {self.state_to_hex(state)}")
 
         print("Encrypt COMPLETE")
@@ -331,15 +339,10 @@ class MiniAes:
             state = self.inv_shift_rows(state)
             print(f"After InvShiftRows : {self.state_to_hex(state)}")
 
+            state = self.inv_sub_nibbles(state)
+            print(f"After InvSubNibbles : {self.state_to_hex(state)}")
+
         print("FINAL INVERSE ROUND")
-        state = self.inv_mix_columns(state)
-        print(f"After InvSubNibbles: {self.state_to_hex(state)}")
-
-        state = self.inv_shift_rows(state)
-        print(f"After InvShiftRows : {self.state_to_hex(state)}")
-
-        state = self.sub_nibbles(state)
-        print(f"After InvSubNibbles: {self.state_to_hex(state)}")
 
         state = self.add_round_keys(state, 0)
         print(f"After InvRoundKeys: {self.state_to_hex(state)}")
