@@ -57,7 +57,7 @@ def main(page: ft.Page):
             aes.set_plaintext(plain_text_field.value.upper())
             aes.set_keys(key_field.value.upper())
             encrypted_state = aes.encrypt()
-            cipher_text_field.value = aes.state_to_hex(encrypted_state)  # using `state_to_hex`
+            cipher_text_field.value = aes.state_to_hex(encrypted_state)  #using `state_to_hex`
             status_text.value = "Enkripsi berhasil"
 
         except Exception as err:
