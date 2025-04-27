@@ -119,3 +119,47 @@ $ python mini_aes_avalanche.py
 ## Penjelasan TestCase
 
 ## Analisis: kelebihan dan keterbatasan Mini-AES
+
+Setelah melakukan percobaan dan eksplorasi implementasi Mini-AES berdasarkan spesifikasi dan beberapa test case yang sudah dijalankan, berikut adalah analisis kelebihan dan keterbatasan dari Mini-AES :
+
+1. **Mudah Dipahami**
+    
+    Mini-AES menyederhanakan konsep AES asli sehingga jauh lebih mudah dipelajari. Operasi-operasi seperti SubNibbles, ShiftRows, MixColumns, dan AddRoundKey tetap dipertahankan, tetapi dengan ukuran data yang kecil (16-bit). Ini sangat membantu untuk memahami dasar kerja cipher modern tanpa harus bergelut dengan kompleksitas penuh AES 128/192/256-bit.
+    
+2. **Struktur Mirip AES Asli**
+    
+    Walaupun lebih kecil, struktur Mini-AES tetap mencerminkan langkah-langkah utama dalam AES standar. Adanya key expansion, multiple rounds, dan transformasi state membuat Mini-AES menjadi model miniatur yang cukup representatif.
+    
+3. **Implementasi yang Praktis**
+    
+    Dengan ukuran input dan output yang kecil (hanya 4 digit hex), Mini-AES memungkinkan kita untuk melacak perubahan di setiap round dengan mudah, baik secara manual maupun lewat program. Ini membuat debugging dan analisis lebih sederhana.
+    
+4. **Mendukung Enkripsi dan Dekripsi**
+    
+    Program yang dikembangkan sudah mendukung proses enkripsi dan dekripsi penuh, termasuk inverse operations seperti InvShiftRows dan InvMixColumns. Ini memungkinkan verifikasi apakah ciphertext bisa dikembalikan ke plaintext asli, yang penting untuk membuktikan validitas cipher.
+    
+5. **Terdapat Efek Avalanche**
+    
+    Dari pengamatan perubahan satu bit di plaintext atau kunci, perubahan hasil cipher cukup signifikan, menunjukkan bahwa Mini-AES tetap memiliki efek avalanche — meskipun skalanya lebih kecil dibandingkan AES nyata. Ini membuktikan bahwa Mini-AES sudah cukup baik memperkenalkan konsep "diffusion".
+
+## Keterbatasan Mini-AES
+
+1. **Tingkat Keamanan Rendah**
+    
+    Karena ukuran blok dan kunci hanya 16-bit, Mini-AES sangat rentan terhadap brute-force attack. Seorang attacker hanya butuh mencoba maksimal 2¹⁶ kombinasi, yang dapat ditembus dalam hitungan detik dengan komputer biasa.
+    
+2. **Operasi MixColumns Terlalu Sederhana**
+    
+    MixColumns pada Mini-AES menggunakan matriks dan operasi di field GF(2⁴) yang sangat sederhana, sehingga jumlah mixing antar bit tidak sebesar yang terjadi di AES standar, yang memakai GF(2⁸) dan matriks lebih kompleks.
+    
+3. **Mode Operasi Terbatas**
+    
+    Percobaan saat ini masih menggunakan mode ECB (Electronic Codebook) secara default, yang rawan terhadap pattern recognition. Implementasi mode CBC (Cipher Block Chaining) masih menjadi spesifikasi tambahan dan belum sepenuhnya diuji.
+    
+4. **Tidak Cocok untuk Produksi**
+    
+    Mini-AES memang hanya untuk tujuan pembelajaran. Dari sisi praktik keamanan nyata, Mini-AES tidak dapat diandalkan untuk aplikasi dunia nyata karena terlalu kecil dan terlalu sederhana untuk menangkal serangan modern.
+    
+5. **Avalanche Effect Tidak Maksimal**
+    
+    Walaupun ada efek avalanche, perubahan bit tidak sebesar AES standar. Ini karena jumlah bit yang diproses hanya sedikit (16-bit), sehingga probabilitas bit flipping di ciphertext lebih kecil dibandingkan enkripsi 128-bit atau lebih.
