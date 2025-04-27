@@ -175,7 +175,7 @@ class MiniAes:
                 self.__MULTIPLICATION_TABLE__[matrix[0]][__CONSTANT_MATRIX[0]]) ^ (
                 self.__MULTIPLICATION_TABLE__[matrix[1]][__CONSTANT_MATRIX[2]]
             )
-            
+
             this_matrix_result.append(index_zero)
 
             # index 1
@@ -220,6 +220,15 @@ class MiniAes:
 
         return result
 
+    def state_to_hex(self, state: list[list[int]]) -> str:
+        # Converts the first block of encryption state into a hex string (for output)
+        result = ""
+        matrix = state[0]  # take ONLY the first matrix, hapus jika ingin outputnya lebih dari 4 digit
+        for i in range(0, len(matrix), 2):
+            combined = (matrix[i] << 4) | matrix[i + 1]
+            result += format(combined, "02X")
+        return result
+
     def encrypt(self) -> list[list[int]]:
         self.round_key_generator()
 
@@ -227,15 +236,34 @@ class MiniAes:
         state = self.add_round_keys(state, 0)
 
         for current_round in range(1, self.__ROUND__ + 1):
-            print(f"Running round: {current_round}")
-            state = self.sub_nibbles(state)
-            state = self.shift_rows(state)
-            state = self.mix_columns(state)
-            state = self.add_round_keys(state, current_round)
+            print(f"ROUND {current_round}")
 
+            state = self.sub_nibbles(state)
+            print(f"After SubNibbles: {self.state_to_hex(state)}")
+
+            state = self.shift_rows(state)
+            print(f"After ShiftRows : {self.state_to_hex(state)}")
+
+            state = self.mix_columns(state)
+            print(f"After MixColumns: {self.state_to_hex(state)}")
+
+            state = self.add_round_keys(state, current_round)
+            print(f"After AddRoundKey: {self.state_to_hex(state)}")
+
+        print("FINAL ROUND")
         state = self.sub_nibbles(state)
+        print(f"After SubNibbles: {self.state_to_hex(state)}")
+
         state = self.shift_rows(state)
+        print(f"After ShiftRows : {self.state_to_hex(state)}")
+
         state = self.add_round_keys(state, 4)
+        print(f"After AddRoundKey: {self.state_to_hex(state)}")
+
+        print("Encrypt COMPLETE")
+        print(f"Ciphertext: {self.state_to_hex(state)}")
+
+        return state
 
         return state
 
@@ -300,3 +328,10 @@ class MiniAes:
 
     def decrypt(self) -> list[list[int]]:
         return [[]]
+
+aes = MiniAes()
+aes.set_plaintext("C3C3")
+aes.set_keys("A1A1")
+state_result = aes.encrypt()
+cipher_hex = aes.state_to_hex(state_result)
+print("Ciphertext:", cipher_hex)

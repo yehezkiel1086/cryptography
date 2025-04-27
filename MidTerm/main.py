@@ -2,7 +2,7 @@ import flet as ft
 from mini_aes import MiniAes
 
 def main(page: ft.Page):
-    page.title = "MiniAES Encrypt/Decrypt"
+    page.title = "Flet"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.window_width = 500
     page.window_height = 700
@@ -12,22 +12,22 @@ def main(page: ft.Page):
 
     # Input fields
     key_field = ft.TextField(
-        label="Kunci (2 Hex Digit)",
-        hint_text="Masukkan kunci 2 karakter hex",
+        label="Kunci (4 Hex Digit)",  # updated label
+        hint_text="Masukkan kunci 4 karakter hex",  # updated hint
         width=400,
         text_align=ft.TextAlign.CENTER
     )
 
     plain_text_field = ft.TextField(
-        label="Plaintext (2 Hex Digit)",
-        hint_text="Masukkan plaintext 2 karakter hex",
+        label="Plaintext (4 Hex Digit)",  # updated label
+        hint_text="Masukkan plaintext 4 karakter hex",  # updated hint
         width=400,
         text_align=ft.TextAlign.CENTER
     )
 
     cipher_text_field = ft.TextField(
-        label="Ciphertext (2 Hex Digit)",
-        hint_text="Masukkan ciphertext 2 karakter hex",
+        label="Ciphertext (4 Hex Digit)",  # updated label
+        hint_text="Masukkan ciphertext 4 karakter hex",  # updated hint
         width=400,
         text_align=ft.TextAlign.CENTER
     )
@@ -54,12 +54,10 @@ def main(page: ft.Page):
                 progress.visible = False
                 page.update()
                 return
-
             aes.set_plaintext(plain_text_field.value.upper())
             aes.set_keys(key_field.value.upper())
-
-            encrypted = aes.encrypt()
-            cipher_text_field.value = encrypted
+            encrypted_state = aes.encrypt()
+            cipher_text_field.value = aes.state_to_hex(encrypted_state)  #using `state_to_hex`
             status_text.value = "Enkripsi berhasil"
 
         except Exception as err:
@@ -68,23 +66,14 @@ def main(page: ft.Page):
         progress.visible = False
         page.update()
 
+    # On progress
     def decrypt(e):
         progress.visible = True
         status_text.value = ""
         page.update()
 
         try:
-            if not key_field.value or not cipher_text_field.value:
-                status_text.value = "Kunci dan Ciphertext harus diisi!"
-                progress.visible = False
-                page.update()
-                return
-
-            aes.set_keys(key_field.value.upper())
-            decrypted = aes.decrypt(cipher_text_field.value.upper())
-            plain_text_field.value = decrypted
-            status_text.value = "Dekripsi berhasil"
-
+            status_text.value = "Fitur dekripsi belum tersedia"
         except Exception as err:
             status_text.value = f"Error: {str(err)}"
 
@@ -112,7 +101,7 @@ def main(page: ft.Page):
                         plain_text_field.value = line.strip().split("Plaintext: ")[-1]
                     if line.startswith("Ciphertext: "):
                         cipher_text_field.value = line.strip().split("Ciphertext: ")[-1]
-            status_text.value = "Data diambil dari mini_aes_output.txt"
+            status_text.value = "Data diambil dari output.txt"
         except Exception as err:
             status_text.value = f"Gagal memuat file: {str(err)}"
         page.update()
