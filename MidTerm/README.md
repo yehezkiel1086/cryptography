@@ -118,6 +118,47 @@ $ python mini_aes_avalanche.py
 
 ## Penjelasan TestCase
 
+![tc_1.png](assets/tc_1.png)
+
+![tc_2.png](assets/tc_2.png)
+
+![tc_3.png](assets/tc_3.png)
+
+Dimisalkan untuk testcase :
+
+| Komponen | Nilai |
+| --- | --- |
+| **Kunci (Key)** | `1234` (Hexadecimal 4 digit) |
+| **Plaintext** | `5678` (Hexadecimal 4 digit) |
+| **Hasil Enkripsi (Ciphertext)** | `E28A` (Hexadecimal 4 digit) |
+| **Status** | "Enkripsi berhasil" |
+
+Artinya, akan terjadi pengenkripsian untuk `5678` menggunakan kunci `1234` berdasarkan algoritma **MiniAES 16-bit**.
+
+### **Proses yang Dilakukan di MiniAES**
+
+Saat tombol **Enkripsi ditekan**, maka:
+
+1. **Round Key Generator**:
+    - Buat 4 buah round key dari key `1234`.
+2. **Round 0**:
+    - AddRoundKey plaintext `5678` dengan round key pertama.
+3. **Round 1 & 2**:
+    - SubNibbles (pakai SBOX),
+    - ShiftRows (geser posisi nibble),
+    - MixColumns (pencampuran kolom di GF(2⁴)),
+    - AddRoundKey (dengan round key ke-1 dan ke-2).
+4. **Round 3**:
+    - SubNibbles,
+    - ShiftRows,
+    - AddRoundKey (dengan round key ke-3).
+    - **Tanpa MixColumns di round 3**.
+5. Setelah semua proses, dihasilkan output ciphertext `E28A`.
+6. Status berhasil ("Enkripsi berhasil"), berarti:
+    - Format input benar (4 digit hex).
+    - Proses enkripsi jalan tanpa error.
+    - Hasil ciphertext valid.
+
 ## Analisis: kelebihan dan keterbatasan Mini-AES
 
 Setelah melakukan percobaan dan eksplorasi implementasi Mini-AES berdasarkan spesifikasi dan beberapa test case yang sudah dijalankan, berikut adalah analisis kelebihan dan keterbatasan dari Mini-AES :
