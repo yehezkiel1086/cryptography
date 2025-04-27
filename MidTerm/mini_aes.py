@@ -42,7 +42,6 @@ class MiniAes:
         self.__plaintext = plaintext
         self.__keys = keys
         self.__round_keys: list[list[int]] = []
-        self.__cyphertext = ""
 
     # Getter and Setter for __plaintext
     def set_plaintext(self, plaintext: str) -> None:
@@ -70,13 +69,6 @@ class MiniAes:
     def get_round_keys(self) -> list[list[int]]:
         return self.__round_keys
 
-    # Getter and Setter for __ciphertext
-    def set_ciphertext(self, ciphertext: str) -> None:
-        self.__ciphertext = ciphertext
-
-    def get_ciphertext(self) -> str:
-        return self.__ciphertext
-
     def convert_to_nibble(self, text: str) -> list[list[int]]:
         res: list[list[int]] = []
         copy_of_text = text
@@ -99,8 +91,6 @@ class MiniAes:
             this_char_list.append((int(two_chars[1], 16) & 240) >> 4)
             this_char_list.append(int(two_chars[1], 16) & 15)
 
-            print(this_char_list)
-
             res.append(this_char_list)
 
         return res
@@ -119,7 +109,7 @@ class MiniAes:
         round_0_keys.append((int(keys[0], 16) & 240) >> 4)
         round_0_keys.append(int(keys[0], 16) & 15)
         round_0_keys.append((int(keys[1], 16) & 240) >> 4)
-        round_0_keys.append((int(keys[1], 16) & 15))
+        round_0_keys.append(int(keys[1], 16) & 15)
 
         round_keys.append(round_0_keys)
 
@@ -152,13 +142,8 @@ class MiniAes:
 
         return subs_list
 
-    def shift_rows(self, state: list[list[int]]):
-        for matrix in state:
-            matrix[1] ^= matrix[3]
-            matrix[3] ^= matrix[1]
-            matrix[1] ^= matrix[3]
-
-        return state
+    def shift_rows(self, state: list[list[int]]) -> list[list[int]]:
+        return [[matrix[0], matrix[3], matrix[2], matrix[1]] for matrix in state]
 
     def mix_columns(self, state: list[list[int]]) -> list[list[int]]:
         __CONSTANT_MATRIX = [
@@ -261,9 +246,8 @@ class MiniAes:
         print(f"After AddRoundKey: {self.state_to_hex(state)}")
 
         print("Encrypt COMPLETE")
-        print(f"Ciphertext: {self.state_to_hex(state)}")
 
-        return state
+        print(f"Ciphertext: {self.state_to_hex(state)}")
 
         return state
 
@@ -281,16 +265,11 @@ class MiniAes:
         return inv_subs_list
 
     def inv_shift_rows(self, state: list[list[int]]):
-        for matrix in state:
-            matrix[1] ^= matrix[3]
-            matrix[3] ^= matrix[1]
-            matrix[1] ^= matrix[3]
-
-        return state
+        return [[matrix[0], matrix[3], matrix[2], matrix[1]] for matrix in state]
 
     def inv_mix_columns(self, state: list[list[int]]) -> list[list[int]]:
         __CONSTANT_MATRIX = [
-            0x3, 0x4, 0x4, 0x3,
+            0x9, 0x2, 0x2, 0x9,
         ]
 
         result_list: list[list[int]] = []
@@ -299,26 +278,30 @@ class MiniAes:
             this_matrix_result = []
 
             # index 0
-            index_zero = (__CONSTANT_MATRIX[0] * matrix[0]) ^ (
-                __CONSTANT_MATRIX[2] * matrix[1]
+            index_zero = (
+              self.__MULTIPLICATION_TABLE__[matrix[0]][__CONSTANT_MATRIX[0]] ^
+              self.__MULTIPLICATION_TABLE__[matrix[1]][__CONSTANT_MATRIX[2]]
             )
             this_matrix_result.append(index_zero)
 
             # index 1
-            index_one = (__CONSTANT_MATRIX[1] * matrix[0]) ^ (
-                __CONSTANT_MATRIX[3] * matrix[1]
+            index_one = (
+              self.__MULTIPLICATION_TABLE__[matrix[0]][__CONSTANT_MATRIX[1]] ^
+              self.__MULTIPLICATION_TABLE__[matrix[1]][__CONSTANT_MATRIX[3]]
             )
             this_matrix_result.append(index_one)
 
             # index 2
-            index_two = (__CONSTANT_MATRIX[0] * matrix[2]) ^ (
-                __CONSTANT_MATRIX[2] * matrix[3]
+            index_two = (
+              self.__MULTIPLICATION_TABLE__[matrix[2]][__CONSTANT_MATRIX[0]] ^
+              self.__MULTIPLICATION_TABLE__[matrix[3]][__CONSTANT_MATRIX[2]]
             )
             this_matrix_result.append(index_two)
 
             # index 3
-            index_three = (__CONSTANT_MATRIX[1] * matrix[2]) ^ (
-                __CONSTANT_MATRIX[3] * matrix[3]
+            index_three = (
+              self.__MULTIPLICATION_TABLE__[matrix[2]][__CONSTANT_MATRIX[1]] ^
+              self.__MULTIPLICATION_TABLE__[matrix[3]][__CONSTANT_MATRIX[3]]
             )
             this_matrix_result.append(index_three)
 
@@ -327,46 +310,41 @@ class MiniAes:
         return result_list
 
     def decrypt(self) -> list[list[int]]:
-        return [[]]
+        self.round_key_generator()
 
-    def encrypt_ecb(self, plaintext: str) -> str:
-        # Pecah jadi blok 4 hex digit per blok
-        blocks = [plaintext[i:i+4] for i in range(0, len(plaintext), 4)]
+        print("Decrypting from final round...")
 
-        ciphertext = ""
-        for block in blocks:
-            self.set_plaintext(block)
-            encrypted_state = self.encrypt()
-            ciphertext += self.state_to_hex(encrypted_state)
+        state = self.convert_to_nibble(self.get_plaintext())
+        state = self.add_round_keys(state, 3)
+        state = self.inv_shift_rows(state)
+        state = self.inv_sub_nibbles(state)
 
-        return ciphertext
+        for current_round in range(2, 0):
+            print(f"ROUND {current_round}")
 
-    def encrypt_cbc(self, plaintext: str, iv: str) -> str:
-        blocks = [plaintext[i:i+4] for i in range(0, len(plaintext), 4)]
+            state = self.add_round_keys(state, current_round)
+            print(f"After InvRoundKeys: {self.state_to_hex(state)}")
 
-        prev_cipher = iv
-        ciphertext = ""
+            state = self.inv_mix_columns(state)
+            print(f"After InvMixColumns: {self.state_to_hex(state)}")
 
-        for block in blocks:
-            # XOR block dengan prev_cipher (IV atau ciphertext sebelumnya)
-            block_int = int(block, 16)
-            prev_cipher_int = int(prev_cipher, 16)
-            xored_block = format(block_int ^ prev_cipher_int, "04X")
+            state = self.inv_shift_rows(state)
+            print(f"After InvShiftRows : {self.state_to_hex(state)}")
 
-            self.set_plaintext(xored_block)
-            encrypted_state = self.encrypt()
-            cipher_block = self.state_to_hex(encrypted_state)
+        print("FINAL INVERSE ROUND")
+        state = self.inv_mix_columns(state)
+        print(f"After InvSubNibbles: {self.state_to_hex(state)}")
 
-            ciphertext += cipher_block
-            prev_cipher = cipher_block  # update for next block
+        state = self.inv_shift_rows(state)
+        print(f"After InvShiftRows : {self.state_to_hex(state)}")
 
-        return ciphertext
+        state = self.sub_nibbles(state)
+        print(f"After InvSubNibbles: {self.state_to_hex(state)}")
 
-# fungsi main
-if __name__ == "__main__":
-    aes = MiniAes()
-    aes.set_plaintext("C3C3")
-    aes.set_keys("A1A1")
-    state_result = aes.encrypt()
-    cipher_hex = aes.state_to_hex(state_result)
-    print("Ciphertext:", cipher_hex)
+        state = self.add_round_keys(state, 0)
+        print(f"After InvRoundKeys: {self.state_to_hex(state)}")
+
+        print("Decrypt COMPLETE")
+        print(f"Plaintext: {self.state_to_hex(state)}")
+
+        return state
