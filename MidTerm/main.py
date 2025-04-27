@@ -54,19 +54,10 @@ def main(page: ft.Page):
                 progress.visible = False
                 page.update()
                 return
-
-            # cek panjang input
-            if len(key_field.value.strip()) != 4 or len(plain_text_field.value.strip()) != 4:
-                status_text.value = "Kunci dan Plaintext harus 4 karakter hex!"
-                progress.visible = False
-                page.update()
-                return
-
             aes.set_plaintext(plain_text_field.value.upper())
             aes.set_keys(key_field.value.upper())
-
-            encrypted = aes.encrypt()
-            cipher_text_field.value = encrypted
+            encrypted_state = aes.encrypt()
+            cipher_text_field.value = aes.state_to_hex(encrypted_state)  # using `state_to_hex`
             status_text.value = "Enkripsi berhasil"
 
         except Exception as err:
@@ -74,6 +65,7 @@ def main(page: ft.Page):
 
         progress.visible = False
         page.update()
+
     # On progress
     def decrypt(e):
         progress.visible = True
