@@ -1,0 +1,3 @@
+Key: A1A1
+Plaintext: C3C3
+Ciphertext: 31B7

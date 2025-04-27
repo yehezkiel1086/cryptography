@@ -1,0 +1,23 @@
+Mini AES Encryption/Decryption Log
+
+ROUND 1
+After SubNibbles: EBED
+After ShiftRows : EDEB
+After MixColumns: 09B3
+After AddRoundKey: 475C
+ROUND 2
+After SubNibbles: 28F5
+After ShiftRows : 25F8
+After MixColumns: 1742
+After AddRoundKey: 3B6F
+ROUND 3
+After SubNibbles: 1CB7
+After ShiftRows : 17BC
+After MixColumns: CDBD
+After AddRoundKey: 58C7
+FINAL ROUND
+After SubNibbles: F358
+After ShiftRows : F853
+After AddRoundKey: 31B7
+Encrypt COMPLETE
+Ciphertext: 31B7
