@@ -329,9 +329,11 @@ class MiniAes:
     def decrypt(self) -> list[list[int]]:
         return [[]]
 
-aes = MiniAes()
-aes.set_plaintext("C3C3")
-aes.set_keys("A1A1")
-state_result = aes.encrypt()
-cipher_hex = aes.state_to_hex(state_result)
-print("Ciphertext:", cipher_hex)
+# fungsi main
+if __name__ == "__main__":
+    aes = MiniAes()
+    aes.set_plaintext("C3C3")
+    aes.set_keys("A1A1")
+    state_result = aes.encrypt()
+    cipher_hex = aes.state_to_hex(state_result)
+    print("Ciphertext:", cipher_hex)
