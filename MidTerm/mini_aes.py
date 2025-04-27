@@ -38,11 +38,20 @@ class MiniAes:
         [0x0, 0xF, 0xD, 0x2, 0x9, 0x6, 0x4, 0x8, 0x1, 0xE, 0xC, 0x3, 0x8, 0x7, 0x5, 0xA], # F
     ]
 
-    def __init__(self, plaintext: str = "", keys: str = ""):
+    def __init__(self, plaintext: str = "", keys: str = "", log_file: str = "mini_aes_log.txt"):
         self.__plaintext = plaintext
         self.__keys = keys
         self.__round_keys: list[list[int]] = []
         self.__ciphertext = ""
+        self.log_file = log_file
+
+        with open(self.log_file, "w") as f:
+            f.write("Mini AES Encryption/Decryption Log\n\n")
+
+    def log(self, message: str) -> None:
+        with open(self.log_file, "a") as f:
+            f.write(message + "\n")
+        print(message)
 
     # Getter and Setter for __ciphertext
     def set_ciphertext(self, ciphertext: str) -> None:
@@ -229,33 +238,33 @@ class MiniAes:
         state = self.add_round_keys(state, 0)
 
         for current_round in range(1, self.__ROUND__):
-            print(f"ROUND {current_round}")
+            self.log(f"ROUND {current_round}")
 
             state = self.sub_nibbles(state)
-            print(f"After SubNibbles: {self.state_to_hex(state)}")
+            self.log(f"After SubNibbles: {self.state_to_hex(state)}")
 
             state = self.shift_rows(state)
-            print(f"After ShiftRows : {self.state_to_hex(state)}")
+            self.log(f"After ShiftRows : {self.state_to_hex(state)}")
 
             state = self.mix_columns(state)
-            print(f"After MixColumns: {self.state_to_hex(state)}")
+            self.log(f"After MixColumns: {self.state_to_hex(state)}")
 
             state = self.add_round_keys(state, current_round)
-            print(f"After AddRoundKey: {self.state_to_hex(state)}")
+            self.log(f"After AddRoundKey: {self.state_to_hex(state)}")
 
-        print("FINAL ROUND")
+        self.log("FINAL ROUND")
         state = self.sub_nibbles(state)
-        print(f"After SubNibbles: {self.state_to_hex(state)}")
+        self.log(f"After SubNibbles: {self.state_to_hex(state)}")
 
         state = self.shift_rows(state)
-        print(f"After ShiftRows : {self.state_to_hex(state)}")
+        self.log(f"After ShiftRows : {self.state_to_hex(state)}")
 
         state = self.add_round_keys(state, 3)
-        print(f"After AddRoundKey: {self.state_to_hex(state)}")
+        self.log(f"After AddRoundKey: {self.state_to_hex(state)}")
 
-        print("Encrypt COMPLETE")
+        self.log("Encrypt COMPLETE")
 
-        print(f"Ciphertext: {self.state_to_hex(state)}")
+        self.log(f"Ciphertext: {self.state_to_hex(state)}")
 
         return state
 
@@ -320,7 +329,7 @@ class MiniAes:
     def decrypt(self) -> list[list[int]]:
         self.round_key_generator()
 
-        print("Decrypting from final round...")
+        self.log("Decrypting from final round...")
 
         state = self.convert_to_nibble(self.get_plaintext())
         state = self.add_round_keys(state, 3)
@@ -328,26 +337,26 @@ class MiniAes:
         state = self.inv_sub_nibbles(state)
 
         for current_round in range(2, 0):
-            print(f"ROUND {current_round}")
+            self.log(f"ROUND {current_round}")
 
             state = self.add_round_keys(state, current_round)
-            print(f"After InvRoundKeys: {self.state_to_hex(state)}")
+            self.log(f"After InvRoundKeys: {self.state_to_hex(state)}")
 
             state = self.inv_mix_columns(state)
-            print(f"After InvMixColumns: {self.state_to_hex(state)}")
+            self.log(f"After InvMixColumns: {self.state_to_hex(state)}")
 
             state = self.inv_shift_rows(state)
-            print(f"After InvShiftRows : {self.state_to_hex(state)}")
+            self.log(f"After InvShiftRows : {self.state_to_hex(state)}")
 
             state = self.inv_sub_nibbles(state)
-            print(f"After InvSubNibbles : {self.state_to_hex(state)}")
+            self.log(f"After InvSubNibbles : {self.state_to_hex(state)}")
 
-        print("FINAL INVERSE ROUND")
+        self.log("FINAL INVERSE ROUND")
 
         state = self.add_round_keys(state, 0)
-        print(f"After InvRoundKeys: {self.state_to_hex(state)}")
+        self.log(f"After InvRoundKeys: {self.state_to_hex(state)}")
 
-        print("Decrypt COMPLETE")
-        print(f"Plaintext: {self.state_to_hex(state)}")
+        self.log("Decrypt COMPLETE")
+        self.log(f"Plaintext: {self.state_to_hex(state)}")
 
         return state

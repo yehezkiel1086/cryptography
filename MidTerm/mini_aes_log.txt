@@ -1,0 +1,18 @@
+Mini AES Encryption/Decryption Log
+
+ROUND 1
+After SubNibbles: EBED
+After ShiftRows : EDEB
+After MixColumns: F046
+After AddRoundKey: BEA9
+ROUND 2
+After SubNibbles: C06A
+After ShiftRows : CA60
+After MixColumns: 2F6B
+After AddRoundKey: 0346
+FINAL ROUND
+After SubNibbles: E12B
+After ShiftRows : EB21
+After AddRoundKey: 7E5B
+Encrypt COMPLETE
+Ciphertext: 7E5B
