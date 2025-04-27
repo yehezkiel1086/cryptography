@@ -1,11 +1,16 @@
+"""
+referensi:
+- https://piazza.com/class_profile/get_resource/ixlc30gojpe5fs/iyv0273azwtz4
+- https://sandilands.info/sgordon/teaching/reports/simplified-aes-example-v2.pdf
+"""
 class MiniAes:
     # constants
     __ROUND__ = 3
     __SBOX__ = [
-        [0xE, 0x4, 0xD, 0x1],  # 0x0  0x1  0x2  0x3
-        [0x2, 0xF, 0xB, 0x8],  # 0x4  0x5  0x6  0x7
-        [0x3, 0xA, 0x6, 0xC],  # 0x8  0x9  0xA  0xB
-        [0x5, 0x9, 0x0, 0x7],  # 0xC  0xC  0xD  0xE
+        0xE, 0x4, 0xD, 0x1,  # 0x0  0x1  0x2  0x3
+        0x2, 0xF, 0xB, 0x8,  # 0x4  0x5  0x6  0x7
+        0x3, 0xA, 0x6, 0xC,  # 0x8  0x9  0xA  0xB
+        0x5, 0x9, 0x0, 0x7,  # 0xC  0xC  0xD  0xE
     ]
 
     def __init__(self):
@@ -21,10 +26,17 @@ class MiniAes:
 
     # Getter and Setter for __keys
     def set_keys(self, keys: str) -> None:
-        self.__keys = keys
+        while len(keys) < 2:
+            # append with "0"
+            keys += "0"
+
+        self.__keys = keys[:2]
 
     def get_keys(self) -> str:
         return self.__keys
+
+    def round_key_generator(self) -> None:
+        return
 
     def sub_nibbles(self, state: str):
         subs_list: list[list[int]] = []
@@ -57,8 +69,8 @@ class MiniAes:
                 last_nibble = full_nibble & 15
 
                 # Ganti dari S-Box
-                first_nibble_subs = self.__SBOX__[first_nibble // 4][first_nibble % 4]
-                last_nibble_subs = self.__SBOX__[last_nibble // 4][last_nibble % 4]
+                first_nibble_subs = self.__SBOX__[first_nibble]
+                last_nibble_subs = self.__SBOX__[last_nibble]
 
                 # add to list
                 this_char_list.append(first_nibble_subs)
@@ -115,15 +127,17 @@ class MiniAes:
 
             result_list.append(this_matrix_result)
 
-        # Placeholder: implement column mixing on state
         return result_list
 
-    def add_round_keys(self, state: str, round_key: str) -> str:
-        result = ""
+    def add_round_keys(
+        self, state: list[list[int]], round_key: list[int]
+    ) -> list[list[int]]:
+        result: list[list[int]] = []
 
-        for s_char, k_char in zip(state, round_key):
-            s_val = int(s_char, 16)
-            k_val = int(k_char, 16)
-            result += format(s_val ^ k_val, "X")
+        for matrix in state:
+            this_matrix_result: list[int] = []
+
+            for s, k in zip(matrix, round_key):
+                this_matrix_result.append(s ^ k)
 
         return result
