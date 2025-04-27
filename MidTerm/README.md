@@ -98,7 +98,7 @@ Berikut merupakan spesifikasinya:
 Untuk menjalankan program:
 
 ```sh
-$ python3 -m venv .venv
+$ python -m venv .venv
 $ source .venv/bin/activate
 ```
 
@@ -108,6 +108,12 @@ $ pip install -r requirements.txt
 
 ```sh
 $ python main.py
+```
+
+Untuk menjalankan Avalanche Test:
+
+```sh
+$ python mini_aes_avalanche.py
 ```
 
 ## Penjelasan TestCase

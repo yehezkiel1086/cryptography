@@ -329,39 +329,6 @@ class MiniAes:
     def decrypt(self) -> list[list[int]]:
         return [[]]
 
-    def encrypt_ecb(self, plaintext: str) -> str:
-        # Pecah jadi blok 4 hex digit per blok
-        blocks = [plaintext[i:i+4] for i in range(0, len(plaintext), 4)]
-
-        ciphertext = ""
-        for block in blocks:
-            self.set_plaintext(block)
-            encrypted_state = self.encrypt()
-            ciphertext += self.state_to_hex(encrypted_state)
-
-        return ciphertext
-
-        def encrypt_cbc(self, plaintext: str, iv: str) -> str:
-            blocks = [plaintext[i:i+4] for i in range(0, len(plaintext), 4)]
-
-            prev_cipher = iv
-            ciphertext = ""
-
-            for block in blocks:
-                # XOR block dengan prev_cipher (IV atau ciphertext sebelumnya)
-                block_int = int(block, 16)
-                prev_cipher_int = int(prev_cipher, 16)
-                xored_block = format(block_int ^ prev_cipher_int, "04X")
-
-                self.set_plaintext(xored_block)
-                encrypted_state = self.encrypt()
-                cipher_block = self.state_to_hex(encrypted_state)
-
-                ciphertext += cipher_block
-                prev_cipher = cipher_block  # update next block
-
-            return ciphertext
-
 aes = MiniAes()
 aes.set_plaintext("C3C3")
 aes.set_keys("A1A1")
