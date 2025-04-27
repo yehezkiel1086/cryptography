@@ -12,6 +12,12 @@ class MiniAes:
         0x3, 0xA, 0x6, 0xC,  # 0x8  0x9  0xA  0xB
         0x5, 0x9, 0x0, 0x7,  # 0xC  0xC  0xD  0xE
     ]
+    __INV_SBOX__ = [
+        0xE, 0x3, 0x4, 0x8,
+        0x1, 0xC, 0xA, 0xF,
+        0x7, 0xD, 0x9, 0x6,
+        0xB, 0x2, 0x0, 0x5
+    ]
 
     def __init__(self):
         self.__plaintext = ""
@@ -141,3 +147,23 @@ class MiniAes:
                 this_matrix_result.append(s ^ k)
 
         return result
+
+    def encrypt(self) -> str:
+        if not self.__plaintext:
+            return None
+
+        state = self.__plaintext
+        state = self.add_round_keys(state, self.__keys)
+
+        for current_round in range(self.__ROUND__ - 1):
+            print(f"Running round: {current_round}")
+            state = self.sub_nibbles(state)
+            state = self.shift_rows(state)
+            state = self.add_round_keys(state, self.__keys)
+
+        state = self.sub_nibbles(state)
+        state = self.shift_rows(state)
+        state = self.add_round_keys(state, self.__keys)
+
+        return state
+
