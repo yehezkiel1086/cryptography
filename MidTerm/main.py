@@ -77,7 +77,7 @@ def main(page: ft.Page):
                 progress.visible = False
                 page.update()
                 return
-            aes.set_plaintext(cipher_text_field.value.upper())
+            aes.set_ciphertext(cipher_text_field.value.upper())
             aes.set_keys(key_field.value.upper())
             decrypted_state = aes.decrypt()
             plain_text_field.value = aes.state_to_hex(decrypted_state)
