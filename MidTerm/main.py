@@ -12,22 +12,22 @@ def main(page: ft.Page):
 
     # Input fields
     key_field = ft.TextField(
-        label="Kunci (4 Hex Digit)",  # updated label
-        hint_text="Masukkan kunci 4 karakter hex",  # updated hint
+        label="Kunci (4 Hex Digit)",
+        hint_text="Masukkan kunci 4 karakter hex",
         width=400,
         text_align=ft.TextAlign.CENTER
     )
 
     plain_text_field = ft.TextField(
-        label="Plaintext (4 Hex Digit)",  # updated label
-        hint_text="Masukkan plaintext 4 karakter hex",  # updated hint
+        label="Plaintext (4 Hex Digit)",
+        hint_text="Masukkan plaintext 4 karakter hex",
         width=400,
         text_align=ft.TextAlign.CENTER
     )
 
     cipher_text_field = ft.TextField(
-        label="Ciphertext (4 Hex Digit)",  # updated label
-        hint_text="Masukkan ciphertext 4 karakter hex",  # updated hint
+        label="Ciphertext (4 Hex Digit)",
+        hint_text="Masukkan ciphertext 4 karakter hex",
         width=400,
         text_align=ft.TextAlign.CENTER
     )
@@ -66,14 +66,23 @@ def main(page: ft.Page):
         progress.visible = False
         page.update()
 
-    # On progress
     def decrypt(e):
         progress.visible = True
         status_text.value = ""
         page.update()
 
         try:
-            status_text.value = "Fitur dekripsi belum tersedia"
+            if not key_field.value or not cipher_text_field.value:
+                status_text.value = "Kunci dan Ciphertext harus diisi!"
+                progress.visible = False
+                page.update()
+                return
+            aes.set_plaintext(cipher_text_field.value.upper())
+            aes.set_keys(key_field.value.upper())
+            decrypted_state = aes.decrypt()
+            plain_text_field.value = aes.state_to_hex(decrypted_state)
+            status_text.value = "Dekripsi berhasil"
+
         except Exception as err:
             status_text.value = f"Error: {str(err)}"
 

@@ -1,5 +1,5 @@
 """
-referensi:
+references:
 - https://piazza.com/class_profile/get_resource/ixlc30gojpe5fs/iyv0273azwtz4
 - https://sandilands.info/sgordon/teaching/reports/simplified-aes-example-v2.pdf
 """
